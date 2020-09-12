@@ -1,5 +1,7 @@
 import os
 
+import click
+
 from flask_migrate import Migrate
 
 from app import create_app, db
@@ -10,6 +12,7 @@ migrate = Migrate(app=app, db=db)
 
 
 @app.cli.command()
+@click.argument('test_names', nargs=-1)
 def test(test_names):
     """Run the unit tests."""
     import unittest
