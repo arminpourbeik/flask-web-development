@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, request, flash
 
-from flask_login import login_user
+from flask_login import login_user, login_required, logout_user
 
 from . import auth
 from .forms import LoginForm
@@ -22,3 +22,10 @@ def login():
 
     return render_template('auth/login.html', form=form)
 
+
+@auth.route('/logout')
+@login_required
+def logout_user():
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('main.index'))
