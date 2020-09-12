@@ -15,7 +15,7 @@ def login():
         if user is not None and user.verify_password(form.password.data):
             login_user(user=user, remember=form.remember_me.data)
             next_ = request.args.get('next')
-            if next_ is not None or not next_.startswith('/'):
+            if next_ is None or not next_.startswith('/'):
                 next_ = url_for('main.index')
             return redirect(next_)
         flash('Invalid username or password.')
@@ -25,7 +25,8 @@ def login():
 
 @auth.route('/logout')
 @login_required
-def logout_user():
+def logout():
     logout_user()
     flash('You have been logged out.')
     return redirect(url_for('main.index'))
+

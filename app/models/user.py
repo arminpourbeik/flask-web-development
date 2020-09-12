@@ -13,9 +13,10 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
 
-    def __init__(self, username, password, **kwargs):
+    def __init__(self, username, password, email, **kwargs):
         super().__init__(**kwargs)
         self.username = username
+        self.email = email
         self.password = password
 
     @property
