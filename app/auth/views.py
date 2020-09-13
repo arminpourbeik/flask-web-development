@@ -64,6 +64,11 @@ def login():
 
 @auth.before_app_request
 def before_request():
+    """The requested URL is outside of the authentication blueprint and is
+        not for a static file. Access to the authentication routes needs to
+        be granted, as those are the routes that will enable the user to
+        confirm the account or perform other account management functions.
+    """
     if current_user.is_authenticated \
             and not current_user.confirmed \
             and request.blueprint != 'auth' \
