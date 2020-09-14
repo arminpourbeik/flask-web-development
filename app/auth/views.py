@@ -108,7 +108,6 @@ def logout():
 
 @auth.before_app_request
 def before_request():
-    print('a request sent to auth blueprint...')
     if current_user.is_authenticated:
         current_user.ping()
         if not current_user.confirmed \
