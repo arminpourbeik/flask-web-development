@@ -113,7 +113,7 @@ class User(UserMixin, db.Model):
         return f'{url}/{hash_}?s={size}&d={default}&r={rating}'
 
     def __repr__(self):
-        return f'<User {self.id}-{self.username}-{self.role}>'
+        return f'<User {self.id} {self.username} {self.role}>'
 
 
 class AnonymousUser(AnonymousUserMixin):
