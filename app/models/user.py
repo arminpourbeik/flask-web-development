@@ -75,6 +75,9 @@ class User(UserMixin, db.Model):
     def is_administrator(self):
         return self.can(Permission.ADMIN)
 
+    def __repr__(self):
+        return f'<User {self.id} - username: {self.username} - role: {self.role}'
+
 
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permission):
