@@ -27,6 +27,9 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
 
+    # Relationships
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
+
     def __init__(self, username, password, email, **kwargs):
         super().__init__(**kwargs)
         self.username = username
@@ -80,6 +83,24 @@ class User(UserMixin, db.Model):
     def is_administrator(self):
         return self.can(Permission.ADMIN)
 
+    def change_email(self, token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token.encode('utf-8'))
+        except:
+            return False
+        if data.get('change_email') != self.id:
+            return False
+        new_email = data.get('new_email')
+        if new_email is None:
+            return False
+        if self.query.filter_by(email=new_email).first() is not None:
+            return False
+        self.email = new_email
+        self.avatar_hash = self.gravatar_hash()
+        db.session.add(self)
+        return True
+
     def gravatar_hash(self):
         return hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
 
@@ -92,7 +113,7 @@ class User(UserMixin, db.Model):
         return f'{url}/{hash_}?s={size}&d={default}&r={rating}'
 
     def __repr__(self):
-        return f'<User {self.id} - username: {self.username} - role: {self.role}'
+        return f'<User {self.id}-{self.username}-{self.role}>'
 
 
 class AnonymousUser(AnonymousUserMixin):
