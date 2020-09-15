@@ -9,10 +9,11 @@ from .models.post import Post
 def users(count=100):
     fake = Faker()
     i = 0
+
     while i < count:
         u = User(email=fake.email(),
                  username=fake.user_name(),
-                 password='password',
+                 password='p@assw0rd',
                  confirmed=True,
                  name=fake.name(),
                  location=fake.city(),
