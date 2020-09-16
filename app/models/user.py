@@ -10,6 +10,7 @@ from flask_login import UserMixin, AnonymousUserMixin
 from .. import db
 from .role import Role, Permission
 from .follow import Follow
+from .post import Post
 from .. import login_manager
 
 
@@ -147,6 +148,15 @@ class User(UserMixin, db.Model):
         return self.followers.filter_by(
             follower_id=user.id
         ).first() is not None
+
+    @classmethod
+    def get_user_by_username(cls, username):
+        return cls.query.filter_by(username=username).first()
+
+    @property
+    def followed_posts(self):
+        return Post.query.join(Follow, Follow.followed_id == Post.author_id) \
+            .filter(Follow.follower_id == self.id)
 
     def __repr__(self):
         return f'<User {self.id} {self.username} {self.role}>'
