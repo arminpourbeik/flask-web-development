@@ -6,16 +6,14 @@ import bleach
 from .. import db
 
 
-class Post(db.Model):
-    __tablename__ = 'posts'
+class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     body_html = db.Column(db.Text)
-
-    # Relationships
-    comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
@@ -27,4 +25,4 @@ class Post(db.Model):
             tags=allowed_tags, strip=True))
 
 
-db.event.listen(Post.body, 'set', Post.on_changed_body)
+db.event.listen(Comment.body, 'set', Comment.on_changed_body)

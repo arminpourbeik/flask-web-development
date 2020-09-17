@@ -42,6 +42,7 @@ class User(UserMixin, db.Model):
                                 backref=db.backref('followed', lazy='joined'),
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
     def __init__(self, username, password, email, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -151,7 +152,7 @@ class User(UserMixin, db.Model):
         ).first() is not None
 
     @classmethod
-    def get_user_by_username(cls, username):
+    def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
 
     @property
