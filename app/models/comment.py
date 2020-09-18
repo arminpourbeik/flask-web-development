@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from flask import url_for
+
 from markdown import markdown
 import bleach
 
@@ -14,6 +16,17 @@ class Comment(db.Model):
     disabled = db.Column(db.Boolean)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+    def to_json(self):
+        json_comment = {
+            'url': url_for('api.get_comment', id=self.id),
+            'post_url': url_for('api.get_post', id=self.post_id),
+            'body': self.body,
+            'body_html': self.body_html,
+            'timestamp': self.timestamp,
+            'author_url': url_for('api.get_user', id=self.author_id),
+        }
+        return json_comment
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
